@@ -50,27 +50,6 @@ A verification script is provided to test the core flows (Create -> Login -> Get
 2. In a separate terminal, run:
    python verify_api.py
 
-High Level Design
-
-graph TD
-    Client[Client / Frontend] -->|REST API| API[FastAPI Application]
-    
-    subgraph "Application Layer"
-        API --> Auth[Auth Middleware (JWT)]
-        API --> OrgController[Organization Controller]
-        API --> AdminController[Admin Controller]
-    end
-    
-    subgraph "Data Layer"
-        OrgController --> MasterDB[(Master Database)]
-        AdminController --> MasterDB
-        
-        OrgController -->|Dynamic Creation| OrgCollection[(Organization Collections)]
-    end
-    
-    MasterDB -->|Metadata| OrgController
-    MasterDB -->|Credentials| AdminController
-
 Design Notes
 
 Architecture & Scalability
