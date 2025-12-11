@@ -1,0 +1,18 @@
+graph TD
+    Client[Client / Frontend] -->|REST API| API[FastAPI Application]
+    
+    subgraph "Application Layer"
+        API --> Auth[Auth Middleware (JWT)]
+        API --> OrgController[Organization Controller]
+        API --> AdminController[Admin Controller]
+    end
+    
+    subgraph "Data Layer"
+        OrgController --> MasterDB[(Master Database)]
+        AdminController --> MasterDB
+        
+        OrgController -->|Dynamic Creation| OrgCollection[(Organization Collections/org_NAME)]
+    end
+    
+    MasterDB -->|Metadata & Connection Strings| OrgController
+    MasterDB -->|Admin Credentials| AdminController
