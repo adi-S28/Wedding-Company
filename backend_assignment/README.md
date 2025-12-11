@@ -49,20 +49,19 @@ A verification script is provided to test the core flows (Create -> Login -> Get
 1. Ensure the server is running.
 2. In a separate terminal, run:
    python verify_api.py
-
 Design Notes
 
 Architecture & Scalability
-- Multi-tenancy: implemented using collection-based isolation. This approach provides a good balance between logical separation and management overhead compared to database-level isolation.
-- Master Database: Acts as the central registry, storing connection strings and metadata. This allows for horizontal scaling where different organizations could reside on different MongoDB clusters (sharding).
-- Async I/O: The use of Motor with FastAPI ensures non-blocking I/O, suitable for high-concurrency environments.
+- Multi-tenancy: based on collection-based isolation. This scheme offers an acceptable ratio of rational segregation-handling expense with database-level segregation.
+- Master Database: A master database which stores and keeps connection strings and metadata. This enables the use of horizontal scaling whereby various organizations may be hosted on varying MongoDB cluster (sharding).
+- Async I/O: With the help of Motor, aside of blocking I/O, Fastapi can be used maliciously where concurrency is at a vital level.
 
 Trade-offs
-1. Collection Management: Creating a collection per organization can lead to namespace pressure on MongoDB if there are thousands of organizations. A "Discriminator Field" pattern (storing all in one collection with an org_id field) scales better for massive numbers of small tenants but offers less isolation.
-2. Dynamic Rename: Renaming collections and syncing data (renameCollection) is an expensive operation and atomic only within the same database. In a sharded setup, this would require manual migration (Find -> Insert -> Delete).
-3. Consistency: Updating the Master DB and the Dynamic Collection is not a single ACID transaction (unless utilizing MongoDB Multi-Document Transactions), creating a potential for partial failures.
+1. Collection Management: The creation of a collection will cause namespace pressure in MongoDB when being created with thousands of organizations. A Discriminator Field pattern (storing all in a single collection using an org id) is better at large scalability with a large number of small tenants but comes at a lower degree of isolation.
+2. Dynamic Rename: renaming Collections and synchronization of the data (renameCollection) is rather expensive, and is only atomic within the same database. This would involve hand over migration (Find -> Insert -> Delete) in a sharded set-up.
+3. Consistency: Reference to the (Master DB) and Dynamic collection: this does not constitute a single ACID operation (except using MongoDB Multi-Document Transactions), which means that it may fail partially.
 
 Improvements
-- Use UUIDs: The current implementation uses MongoDB ObjectIds. UUIDs are cleaner for external APIs.
-- Schema Validation: Enforce schemas on the dynamic collections using MongoDB JSON Schema validation.
-- Transactions: Use MongoDB transactions to ensure atomicity when creating Org + Admin.
+- Use UUIDs: The existing version is based on MongoDB Object Id. UUIDs are higher quality to external APIs.
+- Schema Validation: Impose schemas on the dynamic collections in MongoDB JSON Schema validation.
+- Transactions: MongoDB transactions can be used to provide atomicity during the creation of Org + Admin.
